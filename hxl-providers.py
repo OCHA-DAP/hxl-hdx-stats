@@ -5,8 +5,7 @@ Python CKAN library: https://github.com/ckan/ckanapi
 Started by David Megginson, 2017-09-17
 """
 
-import ckanapi, time, sys
-from pprint import pprint
+import ckanapi, time, sys, csv
 
 DELAY = 2
 """Time delay in seconds between datasets, to give HDX a break."""
@@ -23,6 +22,9 @@ hxl_providers = {}
 # Open a connection to HDX
 ckan = ckanapi.RemoteCKAN(CKAN_URL)
 
+# Open a CSV output stream
+output = csv.writer(sys.stdout)
+
 # Iterate through all the datasets ("packages") and resources on HDX
 start = 0
 result_count = 999999
@@ -32,7 +34,7 @@ while start < result_count:
     print("Read {} package(s)...".format(len(result['results'])), file=sys.stderr)
     for package in result['results']:
         org = package['organization']
-        date = package['metadata_created']
+        date = package['metadata_created'][:10]
         record = hxl_providers.get(org['name'])
         if record:
             record['count'] += 1
@@ -49,6 +51,20 @@ while start < result_count:
     start += CHUNK_SIZE
     time.sleep(DELAY) # give HDX a short rest
 
-pprint(hxl_providers)
+output.writerow([
+    'HDX org',
+    'Org title',
+    'Date first shared HXL',
+    'Total HXL datasets',
+])
+for provider in hxl_providers.values():
+    output.writerow([
+        provider['name'],
+        provider['title'],
+        provider['date'],
+        provider['count'],
+    ])
+        
+
 
 # end
