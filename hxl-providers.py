@@ -27,7 +27,7 @@ output = csv.writer(sys.stdout)
 
 # Iterate through all the datasets ("packages") and resources on HDX
 start = 0
-result_count = 999999
+result_count = 999999 # just a big, big number; will reset on first search result
 while start < result_count:
     result = ckan.action.package_search(fq='tags:hxl', start=start, rows=CHUNK_SIZE)
     result_count = result['count']
@@ -37,20 +37,23 @@ while start < result_count:
         date = package['metadata_created'][:10]
         record = hxl_providers.get(org['name'])
         if record:
+            # If we've already seen this, update the count and check for earlier data
             record['count'] += 1
             if record['date'] > date:
                 record['date'] = date
         else:
+            # If we haven't seen this yet, create the record
             record = {
                 'name': org['name'],
                 'title': org['title'],
                 'date': date,
                 'count': 1
             }
-        hxl_providers[org['name']] = record
-    start += CHUNK_SIZE
+        hxl_providers[org['name']] = record # update the record
+    start += CHUNK_SIZE # next chunk, but first ...
     time.sleep(DELAY) # give HDX a short rest
 
+# Print the output to CSV on STDOUT
 output.writerow([
     'HDX org',
     'Org title',
@@ -65,6 +68,4 @@ for provider in hxl_providers.values():
         provider['count'],
     ])
         
-
-
 # end
