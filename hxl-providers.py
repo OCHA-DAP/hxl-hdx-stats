@@ -34,19 +34,23 @@ while start < result_count:
     print("Read {} package(s)...".format(len(result['results'])), file=sys.stderr)
     for package in result['results']:
         org = package['organization']
-        date = package['metadata_created'][:10]
+        created_date = package['metadata_created'][:10]
+        modified_date = package['metadata_modified'][:10]
         record = hxl_providers.get(org['name'])
         if record:
             # If we've already seen this, update the count and check for earlier data
             record['count'] += 1
-            if record['date'] > date:
-                record['date'] = date
+            if record['first_shared_date'] > created_date:
+                record['first_shared_date'] = created_date
+            if record['last_updated_date'] < modified_date:
+                record['last_updated_date'] = modified_date
         else:
             # If we haven't seen this yet, create the record
             record = {
                 'name': org['name'],
                 'title': org['title'],
-                'date': date,
+                'first_shared_date': created_date,
+                'last_updated_date': modified_date,
                 'count': 1
             }
         hxl_providers[org['name']] = record # update the record
@@ -58,13 +62,15 @@ output.writerow([
     'HDX org',
     'Org title',
     'Date first shared HXL',
+    'Date last updated HXL',
     'Total HXL datasets',
 ])
 for provider in hxl_providers.values():
     output.writerow([
         provider['name'],
         provider['title'],
-        provider['date'],
+        provider['first_shared_date'],
+        provider['last_updated_date'],
         provider['count'],
     ])
         
