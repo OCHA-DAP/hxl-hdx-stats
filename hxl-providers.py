@@ -5,22 +5,14 @@ Python CKAN library: https://github.com/ckan/ckanapi
 Started by David Megginson, 2017-09-17
 """
 
+import config # standard configuration
 import ckanapi, time, sys, csv
-
-DELAY = 2
-"""Time delay in seconds between datasets, to give HDX a break."""
-
-CHUNK_SIZE=100
-"""Number of datasets to read at once"""
-
-CKAN_URL = 'https://data.humdata.org'
-"""Base URL for the CKAN instance."""
 
 hxl_providers = {}
 """List of HXL data providers, the number of datasets, and the earliest date."""
 
 # Open a connection to HDX
-ckan = ckanapi.RemoteCKAN(CKAN_URL)
+ckan = ckanapi.RemoteCKAN(config.CKAN_URL)
 
 # Open a CSV output stream
 output = csv.writer(sys.stdout)
@@ -29,7 +21,7 @@ output = csv.writer(sys.stdout)
 start = 0
 result_count = 999999 # just a big, big number; will reset on first search result
 while start < result_count:
-    result = ckan.action.package_search(fq='tags:hxl', start=start, rows=CHUNK_SIZE)
+    result = ckan.action.package_search(fq=config.SEARCH_FQ, start=start, rows=config.CHUNK_SIZE)
     result_count = result['count']
     print("Read {} package(s)...".format(len(result['results'])), file=sys.stderr)
     for package in result['results']:
@@ -54,8 +46,8 @@ while start < result_count:
                 'count': 1
             }
         hxl_providers[org['name']] = record # update the record
-    start += CHUNK_SIZE # next chunk, but first ...
-    time.sleep(DELAY) # give HDX a short rest
+    start += config.CHUNK_SIZE # next chunk, but first ...
+    time.sleep(config.DELAY) # give HDX a short rest
 
 # Print the output to CSV on STDOUT
 output.writerow([

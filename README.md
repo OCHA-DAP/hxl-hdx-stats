@@ -1,17 +1,23 @@
-Free script to crawl data.humdata.org and collect stats on HXL data providers and datasets.
+Collect HXL stats from HDX
+==========================
 
-Requirements:
+# Requirements:
 
 - Python3
 - ckanapi package
 
-Usage:
+# Usage:
 
-    pip install -r requirements.txt
+    $ pip install -r requirements.txt
+    $ cp config.py.TEMPLATE config.py # edit if desired
+    $ python3 hxl-providers.py > providers.csv
+    $ python3 hxl-datasets.py > datasets.csv
 
-    python3 hxl-providers.py > providers.csv
+# Web links
 
-    python3 hxl-datasets.py > datasets.csv
+- http://hxlstandard.org
+- https://data.humdata.org
 
-About HXL: http://hxlstandard.org
+# Unlicense
 
+This software was written by David Megginson, and is released into the Public Domain. Feel free to adopt it for use with other CKAN deployments (or anything else).
