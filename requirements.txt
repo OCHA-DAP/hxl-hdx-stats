@@ -1,1 +1,1 @@
-ckanapi
+ckancrawler
