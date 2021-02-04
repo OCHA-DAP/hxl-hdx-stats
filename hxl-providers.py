@@ -18,8 +18,8 @@ hxl_providers = {}
 # Open a connection to HDX
 crawler = ckancrawler.Crawler(config.CKAN_URL, delay=0, user_agent=config.USER_AGENT)
 
-# Iterate through all the datasets ("packages") and resources on HDX
-for i, package in enumerate(crawler.packages(fq=config.SEARCH_FQ, sort="metadata_created desc")):
+# Iterate through all the datasets ("packages") on HDX tagged as HXL
+for i, package in enumerate(crawler.packages(fq=config.SEARCH_FQ)):
     org = package['organization']
     created_date = package['metadata_created'][:10]
     modified_date = package['metadata_modified'][:10]
@@ -45,6 +45,7 @@ for i, package in enumerate(crawler.packages(fq=config.SEARCH_FQ, sort="metadata
     # let the user know how it's going
     if (i+1) % 100 == 0:
         logger.info("Processed %d datasets, %d unique orgs...", i+1, len(hxl_providers))
+
 else:
     # print the final results
     logger.info("Total: %d datasets, %d unique orgs.", i+1, len(hxl_providers))
@@ -60,7 +61,9 @@ output.writerow([
     'Date last updated HXL',
     'Total HXL datasets',
 ])
-for provider in hxl_providers.values():
+
+# write all the orgs, in inverse order of the creation date of their earliest HXL dataset
+for provider in sorted(hxl_providers.values(), reverse=True, key=lambda a: a['first_shared_date']):
     output.writerow([
         provider['name'],
         provider['title'],
@@ -68,5 +71,8 @@ for provider in hxl_providers.values():
         provider['last_updated_date'],
         provider['count'],
     ])
+
+
+sys.exit(0)
         
 # end
