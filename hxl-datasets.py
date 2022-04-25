@@ -27,6 +27,15 @@ output.writerow([
     'Date updated',
 ])
 
+output.writerow([
+    '#item +dataset +code',
+    '#item +dataset +name',
+    '#org +code',
+    '#meta +source',
+    '#date +start',
+    '#date +updated',
+])
+
 # Iterate through all the datasets ("packages") on HDX tagged as HXL
 for i, package in enumerate(crawler.packages(fq=config.SEARCH_FQ, sort="metadata_created desc")):
     

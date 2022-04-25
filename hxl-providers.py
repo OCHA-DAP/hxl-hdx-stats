@@ -62,6 +62,14 @@ output.writerow([
     'Total HXL datasets',
 ])
 
+output.writerow([
+    '#org +code',
+    '#org +name',
+    '#date +start',
+    '#date +updated',
+    '#output +datasets +num',
+])
+
 # write all the orgs, in inverse order of the creation date of their earliest HXL dataset
 for provider in sorted(hxl_providers.values(), reverse=True, key=lambda a: a['first_shared_date']):
     output.writerow([
