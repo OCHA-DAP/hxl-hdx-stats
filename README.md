@@ -4,17 +4,25 @@ Collect HXL stats from HDX
 # Requirements
 
 - Python3
-- ckanapi package
-
-# Installation
-
-    $ pip install -r requirements.txt
-    $ cp config.py.TEMPLATE config.py # edit if desired
+- make
 
 # Usage
 
-    $ python3 hxl-providers.py > providers.csv
-    $ python3 hxl-datasets.py > datasets.csv
+Generate reports:
+
+    $ make
+
+Regenerate reports:
+
+    $ make clean reports
+
+Update Python packages:
+
+    $ make real-clean
+
+Push commits to GitHub:
+
+    $ make sync
 
 # Web links
 
