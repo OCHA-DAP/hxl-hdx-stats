@@ -22,6 +22,8 @@ all: reports
 
 reports: $(HXL_PROVIDERS) $(HXL_DATASETS)
 
+refresh: clean reports
+
 $(HXL_PROVIDERS): $(VENV) config.py hxl-providers.py
 	. $(VENV) && mkdir -pv $(OUTPUT_DIR) \
 	&& python3 hxl-providers.py > $@
